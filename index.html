@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Minhas Tarefas</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f0e8;
+    --paper: #fdfaf4;
+    --ink: #1a1610;
+    --ink-soft: #7a7068;
+    --accent: #c94a2a;
+    --accent2: #2a6b5e;
+    --line: #ddd6c8;
+    --done-bg: #ede9e0;
+    --shadow: rgba(26,22,16,0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'DM Mono', monospace;
+    background: var(--bg);
+    min-height: 100vh;
+    color: var(--ink);
+    padding-bottom: 100px;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--ink);
+    color: var(--bg);
+    padding: 28px 20px 22px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .header-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--bg);
+  }
+
+  .header h1 em {
+    font-style: italic;
+    font-weight: 400;
+    color: #c8b99a;
+  }
+
+  .date-chip {
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #8a7e6e;
+    margin-top: 4px;
+  }
+
+  .btn-new-list {
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 2px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 7px 12px;
+    cursor: pointer;
+    white-space: nowrap;
+    margin-top: 4px;
+  }
+
+  /* PROGRESS */
+  .progress-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .progress-track {
+    flex: 1;
+    height: 2px;
+    background: #3a3530;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: #7ec4b5;
+    border-radius: 2px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  .progress-text {
+    font-size: 10px;
+    color: #8a7e6e;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+  }
+
+  /* LIST TABS */
+  .lists-bar {
+    background: var(--paper);
+    border-bottom: 1px solid var(--line);
+    padding: 10px 16px;
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .lists-bar::-webkit-scrollbar { display: none; }
+
+  .list-tab {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 2px;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--ink-soft);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+  }
+
+  .list-tab.active {
+    background: var(--ink);
+    color: var(--bg);
+    border-color: var(--ink);
+  }
+
+  .list-tab-del {
+    font-size: 12px;
+    margin-left: 4px;
+    opacity: 0.5;
+    vertical-align: middle;
+  }
+
+  /* CONTENT */
+  .content {
+    padding: 20px 16px 0;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  /* ADD TASK FORM */
+  .add-form {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 14px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .add-form input[type="text"] {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--ink);
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--line);
+    padding: 6px 0;
+    outline: none;
+    width: 100%;
+  }
+
+  .add-form input::placeholder { color: var(--ink-soft); }
+
+  .add-form-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .cat-select {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--ink);
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    padding: 6px 8px;
+    outline: none;
+    flex: 1;
+  }
+
+  .btn-add {
+    background: var(--accent2);
+    color: white;
+    border: none;
+    border-radius: 2px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 8px 16px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  /* SECTION */
+  .section-label {
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin: 18px 0 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+
+  /* TASKS */
+  .task-list { list-style: none; display: flex; flex-direction: column; gap: 2px; }
+
+  .task-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 14px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-left: 3px solid transparent;
+    border-radius: 2px;
+    transition: all 0.15s;
+    position: relative;
+  }
+
+  .task-item.done {
+    background: var(--done-bg);
+    border-left-color: var(--accent2);
+    opacity: 0.65;
+  }
+
+  .task-item.done .task-text {
+    text-decoration: line-through;
+    color: var(--ink-soft);
+  }
+
+  .checkbox {
+    width: 17px;
+    height: 17px;
+    border: 1.5px solid var(--ink-soft);
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .task-item.done .checkbox {
+    background: var(--accent2);
+    border-color: var(--accent2);
+  }
+
+  .checkbox-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: white;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  .task-item.done .checkbox-dot { opacity: 1; }
+
+  .task-body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .task-text {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ink);
+    word-break: break-word;
+    cursor: pointer;
+  }
+
+  .task-tag {
+    display: inline-block;
+    font-size: 8px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 2px 5px;
+    border-radius: 2px;
+    margin-top: 4px;
+  }
+
+  .tag-casa    { background: #ede0d4; color: #8b5e3c; }
+  .tag-compras { background: #d4e8e0; color: #2a6b5e; }
+  .tag-estudos { background: #d4d8ed; color: #3c4a8b; }
+  .tag-pessoas { background: #edd4d4; color: #8b3c3c; }
+  .tag-tarefas { background: #e8edd4; color: #5a6b2a; }
+  .tag-outro   { background: #e8e4dc; color: #6b6358; }
+
+  .task-actions {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .btn-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    opacity: 0.35;
+    padding: 2px;
+    line-height: 1;
+    transition: opacity 0.15s;
+  }
+  .btn-icon:hover { opacity: 0.8; }
+
+  /* EMPTY STATE */
+  .empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--ink-soft);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+  }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26,22,16,0.5);
+    z-index: 200;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--paper);
+    border-radius: 6px 6px 0 0;
+    padding: 24px 20px 36px;
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .modal h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    margin-bottom: 4px;
+  }
+
+  .modal input[type="text"] {
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    color: var(--ink);
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    padding: 10px 12px;
+    outline: none;
+    width: 100%;
+  }
+
+  .modal select {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--ink);
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    padding: 10px 12px;
+    outline: none;
+    width: 100%;
+  }
+
+  .modal-btns {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+
+  .btn-cancel {
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 9px 16px;
+    cursor: pointer;
+    color: var(--ink-soft);
+  }
+
+  .btn-save {
+    background: var(--ink);
+    color: var(--bg);
+    border: none;
+    border-radius: 2px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 9px 16px;
+    cursor: pointer;
+  }
+
+  /* NEW LIST MODAL */
+  .nl-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26,22,16,0.5);
+    z-index: 200;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .nl-modal-overlay.open { display: flex; }
+
+  /* FAB */
+  .fab {
+    position: fixed;
+    bottom: 24px;
+    right: 20px;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: white;
+    font-size: 26px;
+    line-height: 1;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(201,74,42,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 150;
+    transition: transform 0.15s;
+  }
+  .fab:active { transform: scale(0.93); }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <div>
+      <h1>Minhas <em>tarefas</em></h1>
+      <div class="date-chip" id="date-label"></div>
+    </div>
+    <button class="btn-new-list" onclick="openNewListModal()">+ Lista</button>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-track"><div class="progress-fill" id="prog-fill"></div></div>
+    <div class="progress-text" id="prog-text">0 / 0</div>
+  </div>
+</div>
+
+<!-- LISTS BAR -->
+<div class="lists-bar" id="lists-bar"></div>
+
+<!-- CONTENT -->
+<div class="content">
+  <div class="add-form">
+    <input type="text" id="task-input" placeholder="Nova tarefa..." onkeydown="if(event.key==='Enter') addTask()">
+    <div class="add-form-row">
+      <select class="cat-select" id="cat-select">
+        <option value="casa">🏠 Casa</option>
+        <option value="compras">🛒 Compras</option>
+        <option value="estudos">📚 Estudos</option>
+        <option value="pessoas">👥 Pessoas</option>
+        <option value="tarefas">✅ Tarefas</option>
+        <option value="outro">📌 Outro</option>
+      </select>
+      <button class="btn-add" onclick="addTask()">Adicionar</button>
+    </div>
+  </div>
+
+  <div id="tasks-container"></div>
+</div>
+
+<!-- FAB mobile hint (scroll to top on tap) -->
+<button class="fab" onclick="document.getElementById('task-input').focus(); window.scrollTo({top:0,behavior:'smooth'})">+</button>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal">
+    <h3>Editar tarefa</h3>
+    <input type="text" id="edit-input" placeholder="Texto da tarefa">
+    <select id="edit-cat">
+      <option value="casa">🏠 Casa</option>
+      <option value="compras">🛒 Compras</option>
+      <option value="estudos">📚 Estudos</option>
+      <option value="pessoas">👥 Pessoas</option>
+      <option value="tarefas">✅ Tarefas</option>
+      <option value="outro">📌 Outro</option>
+    </select>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeEditModal()">Cancelar</button>
+      <button class="btn-save" onclick="saveEdit()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- NEW LIST MODAL -->
+<div class="nl-modal-overlay" id="nl-modal">
+  <div class="modal">
+    <h3>Nova lista</h3>
+    <input type="text" id="nl-input" placeholder="Nome da lista..." onkeydown="if(event.key==='Enter') createList()">
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeNewListModal()">Cancelar</button>
+      <button class="btn-save" onclick="createList()">Criar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── STATE ──────────────────────────────────────────────
+const STORAGE_KEY = 'tarefas_app_v2';
+
+function load() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || defaultState(); }
+  catch { return defaultState(); }
+}
+
+function defaultState() {
+  return {
+    lists: [{ id: 'default', name: 'Geral' }],
+    activeList: 'default',
+    tasks: []
+  };
+}
+
+function save(state) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+let state = load();
+let editingId = null;
+
+// ── UTILS ──────────────────────────────────────────────
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
+
+function catLabel(c) {
+  const m = { casa:'Casa', compras:'Compras', estudos:'Estudos', pessoas:'Pessoas', tarefas:'Tarefas', outro:'Outro' };
+  return m[c] || c;
+}
+
+// ── RENDER ─────────────────────────────────────────────
+function render() {
+  renderListsBar();
+  renderTasks();
+  renderProgress();
+  document.getElementById('date-label').textContent = new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});
+}
+
+function renderListsBar() {
+  const bar = document.getElementById('lists-bar');
+  bar.innerHTML = '';
+  state.lists.forEach(l => {
+    const btn = document.createElement('button');
+    btn.className = 'list-tab' + (l.id === state.activeList ? ' active' : '');
+    btn.innerHTML = l.name + (l.id !== 'default' ? ` <span class="list-tab-del" onclick="deleteList(event,'${l.id}')">×</span>` : '');
+    btn.onclick = (e) => { if(e.target.classList.contains('list-tab-del')) return; switchList(l.id); };
+    bar.appendChild(btn);
+  });
+}
+
+function renderTasks() {
+  const container = document.getElementById('tasks-container');
+  const tasks = state.tasks.filter(t => t.listId === state.activeList);
+
+  if (tasks.length === 0) {
+    container.innerHTML = '<div class="empty">Nenhuma tarefa ainda.<br>Adicione acima ↑</div>';
+    return;
+  }
+
+  const cats = ['casa','compras','estudos','pessoas','tarefas','outro'];
+  let html = '';
+
+  cats.forEach(cat => {
+    const group = tasks.filter(t => t.cat === cat);
+    if (!group.length) return;
+    html += `<div class="section-label">${catLabel(cat)}</div><ul class="task-list">`;
+    group.forEach(t => {
+      html += `
+        <li class="task-item ${t.done ? 'done' : ''}" id="task-${t.id}">
+          <div class="checkbox" onclick="toggleTask('${t.id}')"><div class="checkbox-dot"></div></div>
+          <div class="task-body" onclick="toggleTask('${t.id}')">
+            <div class="task-text">${escHtml(t.text)}</div>
+            <span class="task-tag tag-${t.cat}">${catLabel(t.cat)}</span>
+          </div>
+          <div class="task-actions">
+            <button class="btn-icon" onclick="openEditModal('${t.id}')" title="Editar">✎</button>
+            <button class="btn-icon" onclick="deleteTask('${t.id}')" title="Excluir">✕</button>
+          </div>
+        </li>`;
+    });
+    html += '</ul>';
+  });
+
+  container.innerHTML = html;
+}
+
+function renderProgress() {
+  const tasks = state.tasks.filter(t => t.listId === state.activeList);
+  const done = tasks.filter(t => t.done).length;
+  const total = tasks.length;
+  const pct = total ? Math.round((done/total)*100) : 0;
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-text').textContent = `${done} / ${total}`;
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── ACTIONS ────────────────────────────────────────────
+function addTask() {
+  const input = document.getElementById('task-input');
+  const cat = document.getElementById('cat-select').value;
+  const text = input.value.trim();
+  if (!text) return;
+  state.tasks.push({ id: uid(), listId: state.activeList, text, cat, done: false });
+  input.value = '';
+  save(state);
+  render();
+}
+
+function toggleTask(id) {
+  const t = state.tasks.find(t => t.id === id);
+  if (t) { t.done = !t.done; save(state); render(); }
+}
+
+function deleteTask(id) {
+  state.tasks = state.tasks.filter(t => t.id !== id);
+  save(state);
+  render();
+}
+
+function openEditModal(id) {
+  const t = state.tasks.find(t => t.id === id);
+  if (!t) return;
+  editingId = id;
+  document.getElementById('edit-input').value = t.text;
+  document.getElementById('edit-cat').value = t.cat;
+  document.getElementById('edit-modal').classList.add('open');
+  setTimeout(() => document.getElementById('edit-input').focus(), 100);
+}
+
+function closeEditModal() {
+  document.getElementById('edit-modal').classList.remove('open');
+  editingId = null;
+}
+
+function saveEdit() {
+  const text = document.getElementById('edit-input').value.trim();
+  const cat = document.getElementById('edit-cat').value;
+  if (!text || !editingId) return;
+  const t = state.tasks.find(t => t.id === editingId);
+  if (t) { t.text = text; t.cat = cat; save(state); render(); }
+  closeEditModal();
+}
+
+// ── LISTS ──────────────────────────────────────────────
+function switchList(id) {
+  state.activeList = id;
+  save(state);
+  render();
+}
+
+function openNewListModal() {
+  document.getElementById('nl-modal').classList.add('open');
+  setTimeout(() => document.getElementById('nl-input').focus(), 100);
+}
+
+function closeNewListModal() {
+  document.getElementById('nl-modal').classList.remove('open');
+  document.getElementById('nl-input').value = '';
+}
+
+function createList() {
+  const name = document.getElementById('nl-input').value.trim();
+  if (!name) return;
+  const id = uid();
+  state.lists.push({ id, name });
+  state.activeList = id;
+  save(state);
+  closeNewListModal();
+  render();
+}
+
+function deleteList(e, id) {
+  e.stopPropagation();
+  if (!confirm('Excluir esta lista e todas as suas tarefas?')) return;
+  state.lists = state.lists.filter(l => l.id !== id);
+  state.tasks = state.tasks.filter(t => t.listId !== id);
+  if (state.activeList === id) state.activeList = state.lists[0]?.id || 'default';
+  save(state);
+  render();
+}
+
+// Close modals on overlay click
+document.getElementById('edit-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeEditModal();
+});
+document.getElementById('nl-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeNewListModal();
+});
+
+// ── INIT ───────────────────────────────────────────────
+render();
+</script>
+</body>
+</html>
