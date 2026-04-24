@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Jamile-Tarefas</title>
+<title>Jamile — Tarefas</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -321,6 +321,7 @@
   .tag-estudos { background: #d4d8ed; color: #3c4a8b; }
   .tag-pessoas { background: #edd4d4; color: #8b3c3c; }
   .tag-tarefas { background: #e8edd4; color: #5a6b2a; }
+  .tag-laila   { background: #fde8f5; color: #9b3c7a; }
   .tag-outro   { background: #e8e4dc; color: #6b6358; }
 
   .task-actions {
@@ -477,7 +478,7 @@
 <div class="header">
   <div class="header-top">
     <div>
-      <h1>Minhas <em>tarefas</em></h1>
+      <h1>Jamile <em>tarefas</em></h1>
       <div class="date-chip" id="date-label"></div>
     </div>
     <button class="btn-new-list" onclick="openNewListModal()">+ Lista</button>
@@ -502,6 +503,7 @@
         <option value="estudos">📚 Estudos</option>
         <option value="pessoas">👥 Pessoas</option>
         <option value="tarefas">✅ Tarefas</option>
+        <option value="laila">👧 Laila</option>
         <option value="outro">📌 Outro</option>
       </select>
       <button class="btn-add" onclick="addTask()">Adicionar</button>
@@ -525,6 +527,7 @@
       <option value="estudos">📚 Estudos</option>
       <option value="pessoas">👥 Pessoas</option>
       <option value="tarefas">✅ Tarefas</option>
+      <option value="laila">👧 Laila</option>
       <option value="outro">📌 Outro</option>
     </select>
     <div class="modal-btns">
@@ -574,7 +577,7 @@ let editingId = null;
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
 
 function catLabel(c) {
-  const m = { casa:'Casa', compras:'Compras', estudos:'Estudos', pessoas:'Pessoas', tarefas:'Tarefas', outro:'Outro' };
+  const m = { casa:'Casa', compras:'Compras', estudos:'Estudos', pessoas:'Pessoas', tarefas:'Tarefas', laila:'Laila', outro:'Outro' };
   return m[c] || c;
 }
 
@@ -607,7 +610,7 @@ function renderTasks() {
     return;
   }
 
-  const cats = ['casa','compras','estudos','pessoas','tarefas','outro'];
+  const cats = ['casa','compras','estudos','pessoas','tarefas','laila','outro'];
   let html = '';
 
   cats.forEach(cat => {
