@@ -112,6 +112,43 @@
     white-space: nowrap;
   }
 
+  /* MAIN MENU */
+  .main-menu {
+    background: var(--paper);
+    border-bottom: 1px solid var(--line);
+    padding: 10px 16px 0;
+    display: flex;
+    justify-content: center;
+  }
+
+  .main-menu-inner {
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    gap: 6px;
+  }
+
+  .main-tab {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 8px 12px;
+    border-radius: 2px 2px 0 0;
+    border: 1px solid var(--line);
+    border-bottom: none;
+    background: transparent;
+    color: var(--ink-soft);
+    cursor: pointer;
+    flex: 1;
+  }
+
+  .main-tab.active {
+    background: var(--ink);
+    color: var(--bg);
+    border-color: var(--ink);
+  }
+
   /* LIST TABS */
   .lists-bar {
     background: var(--paper);
@@ -151,6 +188,8 @@
     opacity: 0.5;
     vertical-align: middle;
   }
+
+  .lists-bar.hidden { display: none; }
 
   /* CONTENT */
   .content {
@@ -470,6 +509,169 @@
     transition: transform 0.15s;
   }
   .fab:active { transform: scale(0.93); }
+  .fab.hidden { display: none; }
+
+  /* WEIGHT GOAL */
+  .view { display: none; }
+  .view.active { display: block; }
+
+  .goal-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .goal-panel {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 14px;
+  }
+
+  .goal-panel h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    line-height: 1.15;
+    margin-bottom: 12px;
+  }
+
+  .goal-form {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .field label {
+    display: block;
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 5px;
+  }
+
+  .field input {
+    width: 100%;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--ink);
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    padding: 10px 12px;
+    outline: none;
+  }
+
+  .field input:focus {
+    border-color: var(--accent2);
+  }
+
+  .goal-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 12px;
+  }
+
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .kpi {
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--ink-soft);
+    border-radius: 2px;
+    padding: 10px;
+    background: var(--bg);
+    min-height: 74px;
+  }
+
+  .kpi.good { border-left-color: var(--accent2); }
+  .kpi.warn { border-left-color: var(--accent); }
+
+  .kpi-label {
+    font-size: 8px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+  }
+
+  .kpi-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    line-height: 1.1;
+  }
+
+  .kpi-note {
+    font-size: 10px;
+    line-height: 1.35;
+    color: var(--ink-soft);
+    margin-top: 5px;
+  }
+
+  .daily-entry {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    align-items: end;
+  }
+
+  .history-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-top: 10px;
+  }
+
+  .history-item {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 10px;
+    align-items: center;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    padding: 10px;
+    font-size: 11px;
+  }
+
+  .history-date {
+    color: var(--ink-soft);
+  }
+
+  .history-status {
+    color: var(--ink-soft);
+    text-align: right;
+  }
+
+  .history-status.good { color: var(--accent2); }
+  .history-status.warn { color: var(--accent); }
+
+  .goal-empty {
+    color: var(--ink-soft);
+    font-size: 12px;
+    line-height: 1.45;
+    padding: 8px 0 2px;
+  }
+
+  @media (min-width: 560px) {
+    .goal-form {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .kpi-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .daily-entry {
+      grid-template-columns: 1fr 1fr auto;
+    }
+  }
 </style>
 </head>
 <body>
@@ -489,28 +691,82 @@
   </div>
 </div>
 
+<!-- MAIN MENU -->
+<div class="main-menu">
+  <div class="main-menu-inner">
+    <button class="main-tab active" id="tab-tasks" onclick="switchView('tasks')">Tarefas</button>
+    <button class="main-tab" id="tab-weight" onclick="switchView('weight')">Meta peso</button>
+  </div>
+</div>
+
 <!-- LISTS BAR -->
 <div class="lists-bar" id="lists-bar"></div>
 
 <!-- CONTENT -->
 <div class="content">
-  <div class="add-form">
-    <input type="text" id="task-input" placeholder="Nova tarefa..." onkeydown="if(event.key==='Enter') addTask()">
-    <div class="add-form-row">
-      <select class="cat-select" id="cat-select">
-        <option value="casa">🏠 Casa</option>
-        <option value="compras">🛒 Compras</option>
-        <option value="estudos">📚 Estudos</option>
-        <option value="pessoas">👥 Pessoas</option>
-        <option value="tarefas">✅ Tarefas</option>
-        <option value="laila">👧 Laila</option>
-        <option value="outro">📌 Outro</option>
-      </select>
-      <button class="btn-add" onclick="addTask()">Adicionar</button>
+  <div class="view active" id="tasks-view">
+    <div class="add-form">
+      <input type="text" id="task-input" placeholder="Nova tarefa..." onkeydown="if(event.key==='Enter') addTask()">
+      <div class="add-form-row">
+        <select class="cat-select" id="cat-select">
+          <option value="casa">🏠 Casa</option>
+          <option value="compras">🛒 Compras</option>
+          <option value="estudos">📚 Estudos</option>
+          <option value="pessoas">👥 Pessoas</option>
+          <option value="tarefas">✅ Tarefas</option>
+          <option value="laila">👧 Laila</option>
+          <option value="outro">📌 Outro</option>
+        </select>
+        <button class="btn-add" onclick="addTask()">Adicionar</button>
+      </div>
     </div>
+
+    <div id="tasks-container"></div>
   </div>
 
-  <div id="tasks-container"></div>
+  <div class="view" id="weight-view">
+    <div class="goal-grid">
+      <div class="goal-panel">
+        <h2>Meta de peso</h2>
+        <div class="goal-form">
+          <div class="field">
+            <label for="goal-loss">Quilos a perder</label>
+            <input type="number" id="goal-loss" min="0" step="0.1" inputmode="decimal" placeholder="Ex: 6">
+          </div>
+          <div class="field">
+            <label for="goal-start">Peso inicial</label>
+            <input type="number" id="goal-start" min="0" step="0.1" inputmode="decimal" placeholder="Ex: 82.5">
+          </div>
+          <div class="field">
+            <label for="goal-date">Data da meta</label>
+            <input type="date" id="goal-date">
+          </div>
+        </div>
+        <div class="goal-actions">
+          <button class="btn-cancel" onclick="resetWeightGoal()">Limpar</button>
+          <button class="btn-save" onclick="saveWeightGoal()">Salvar meta</button>
+        </div>
+        <div class="kpi-grid" id="weight-kpis"></div>
+      </div>
+
+      <div class="goal-panel">
+        <h2>Peso do dia</h2>
+        <div class="daily-entry">
+          <div class="field">
+            <label for="weight-entry-date">Data</label>
+            <input type="date" id="weight-entry-date">
+          </div>
+          <div class="field">
+            <label for="weight-entry">Peso</label>
+            <input type="number" id="weight-entry" min="0" step="0.1" inputmode="decimal" placeholder="Kg">
+          </div>
+          <button class="btn-add" onclick="addWeightEntry()">Lançar</button>
+        </div>
+        <div class="section-label">Histórico</div>
+        <div id="weight-history"></div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- FAB mobile hint (scroll to top on tap) -->
@@ -554,7 +810,7 @@
 const STORAGE_KEY = 'tarefas_app_v2';
 
 function load() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || defaultState(); }
+  try { return normalizeState(JSON.parse(localStorage.getItem(STORAGE_KEY)) || defaultState()); }
   catch { return defaultState(); }
 }
 
@@ -562,7 +818,24 @@ function defaultState() {
   return {
     lists: [{ id: 'default', name: 'Geral' }],
     activeList: 'default',
-    tasks: []
+    activeView: 'tasks',
+    tasks: [],
+    weightGoal: null,
+    weightEntries: []
+  };
+}
+
+function normalizeState(raw) {
+  const base = defaultState();
+  return {
+    ...base,
+    ...raw,
+    lists: Array.isArray(raw?.lists) && raw.lists.length ? raw.lists : base.lists,
+    activeList: raw?.activeList || base.activeList,
+    activeView: raw?.activeView || base.activeView,
+    tasks: Array.isArray(raw?.tasks) ? raw.tasks : [],
+    weightGoal: raw?.weightGoal || null,
+    weightEntries: Array.isArray(raw?.weightEntries) ? raw.weightEntries : []
   };
 }
 
@@ -581,12 +854,57 @@ function catLabel(c) {
   return m[c] || c;
 }
 
+function todayIso() {
+  const d = new Date();
+  d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+  return d.toISOString().slice(0, 10);
+}
+
+function parseIsoDate(s) {
+  if (!s) return null;
+  const [y, m, d] = s.split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
+
+function daysBetween(start, end) {
+  const ms = parseIsoDate(end) - parseIsoDate(start);
+  return Math.max(0, Math.round(ms / 86400000));
+}
+
+function grams(kg) {
+  return Math.round(Math.abs(kg) * 1000);
+}
+
+function formatKg(n) {
+  return `${Number(n).toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} kg`;
+}
+
+function formatGramsFromKg(n) {
+  return `${grams(n).toLocaleString('pt-BR')} g`;
+}
+
+function dateLabel(iso) {
+  return parseIsoDate(iso).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+}
+
 // ── RENDER ─────────────────────────────────────────────
 function render() {
+  renderView();
   renderListsBar();
   renderTasks();
   renderProgress();
+  renderWeightGoal();
   document.getElementById('date-label').textContent = new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});
+}
+
+function renderView() {
+  const isWeight = state.activeView === 'weight';
+  document.getElementById('tasks-view').classList.toggle('active', !isWeight);
+  document.getElementById('weight-view').classList.toggle('active', isWeight);
+  document.getElementById('tab-tasks').classList.toggle('active', !isWeight);
+  document.getElementById('tab-weight').classList.toggle('active', isWeight);
+  document.getElementById('lists-bar').classList.toggle('hidden', isWeight);
+  document.querySelector('.fab').classList.toggle('hidden', isWeight);
 }
 
 function renderListsBar() {
@@ -646,6 +964,73 @@ function renderProgress() {
   document.getElementById('prog-text').textContent = `${done} / ${total}`;
 }
 
+function renderWeightGoal() {
+  const goal = state.weightGoal;
+  document.getElementById('goal-loss').value = goal?.lossKg ?? '';
+  document.getElementById('goal-start').value = goal?.startWeightKg ?? '';
+  document.getElementById('goal-date').value = goal?.targetDate ?? '';
+  if (!document.getElementById('weight-entry-date').value) {
+    document.getElementById('weight-entry-date').value = todayIso();
+  }
+  renderWeightKpis();
+  renderWeightHistory();
+}
+
+function renderWeightKpis() {
+  const box = document.getElementById('weight-kpis');
+  const goal = state.weightGoal;
+  if (!goal) {
+    box.innerHTML = '<div class="goal-empty">Salve a meta para calcular a perda diária e acompanhar os lançamentos.</div>';
+    return;
+  }
+
+  const summary = weightSummary(goal, todayIso());
+  const statusClass = summary.hasEntry ? (summary.deltaKg <= 0 ? 'good' : 'warn') : '';
+  const statusText = summary.hasEntry
+    ? (summary.deltaKg <= 0 ? `${formatGramsFromKg(summary.deltaKg)} abaixo da meta` : `${formatGramsFromKg(summary.deltaKg)} fora da meta`)
+    : 'Sem peso hoje';
+  const neededText = summary.hasEntry ? formatGramsFromKg(Math.max(0, summary.deltaKg)) : 'Lance o peso';
+
+  box.innerHTML = `
+    <div class="kpi">
+      <div class="kpi-label">Perda diária</div>
+      <div class="kpi-value">${formatGramsFromKg(summary.dailyLossKg)}</div>
+      <div class="kpi-note">${summary.totalDays} dias até ${dateLabel(goal.targetDate)}</div>
+    </div>
+    <div class="kpi ${statusClass}">
+      <div class="kpi-label">Ritmo de hoje</div>
+      <div class="kpi-value">${statusText}</div>
+      <div class="kpi-note">Peso alvo hoje: ${formatKg(summary.expectedWeightKg)}</div>
+    </div>
+    <div class="kpi ${summary.hasEntry ? (summary.deltaKg > 0 ? 'warn' : 'good') : ''}">
+      <div class="kpi-label">Para voltar à meta</div>
+      <div class="kpi-value">${neededText}</div>
+      <div class="kpi-note">Meta final: ${formatKg(summary.targetWeightKg)}</div>
+    </div>`;
+}
+
+function renderWeightHistory() {
+  const box = document.getElementById('weight-history');
+  const entries = [...state.weightEntries].sort((a, b) => b.date.localeCompare(a.date));
+  if (!entries.length) {
+    box.innerHTML = '<div class="empty">Nenhum peso lançado ainda.</div>';
+    return;
+  }
+
+  box.innerHTML = `<ul class="history-list">${entries.map(e => {
+    const summary = state.weightGoal ? weightSummary(state.weightGoal, e.date, e.weightKg) : null;
+    const delta = summary ? e.weightKg - summary.expectedWeightKg : 0;
+    const good = delta <= 0;
+    const status = summary ? (good ? `${formatGramsFromKg(delta)} abaixo` : `${formatGramsFromKg(delta)} acima`) : '';
+    return `
+      <li class="history-item">
+        <span class="history-date">${parseIsoDate(e.date).toLocaleDateString('pt-BR')}</span>
+        <strong>${formatKg(e.weightKg)}</strong>
+        <span class="history-status ${good ? 'good' : 'warn'}">${status}</span>
+      </li>`;
+  }).join('')}</ul>`;
+}
+
 function escHtml(s) {
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
@@ -658,6 +1043,12 @@ function addTask() {
   if (!text) return;
   state.tasks.push({ id: uid(), listId: state.activeList, text, cat, done: false });
   input.value = '';
+  save(state);
+  render();
+}
+
+function switchView(view) {
+  state.activeView = view;
   save(state);
   render();
 }
@@ -733,6 +1124,61 @@ function deleteList(e, id) {
   if (state.activeList === id) state.activeList = state.lists[0]?.id || 'default';
   save(state);
   render();
+}
+
+// ── WEIGHT GOAL ────────────────────────────────────────
+function saveWeightGoal() {
+  const lossKg = Number(document.getElementById('goal-loss').value.replace(',', '.'));
+  const startWeightKg = Number(document.getElementById('goal-start').value.replace(',', '.'));
+  const targetDate = document.getElementById('goal-date').value;
+  if (!lossKg || !startWeightKg || !targetDate) return;
+
+  const startDate = state.weightGoal?.startDate || todayIso();
+  state.weightGoal = { lossKg, startWeightKg, targetDate, startDate };
+  save(state);
+  render();
+}
+
+function resetWeightGoal() {
+  if (!confirm('Limpar a meta e o histórico de pesos?')) return;
+  state.weightGoal = null;
+  state.weightEntries = [];
+  save(state);
+  render();
+}
+
+function addWeightEntry() {
+  const date = document.getElementById('weight-entry-date').value || todayIso();
+  const weightKg = Number(document.getElementById('weight-entry').value.replace(',', '.'));
+  if (!date || !weightKg) return;
+
+  const existing = state.weightEntries.find(e => e.date === date);
+  if (existing) existing.weightKg = weightKg;
+  else state.weightEntries.push({ date, weightKg });
+
+  document.getElementById('weight-entry').value = '';
+  save(state);
+  render();
+}
+
+function weightSummary(goal, date, explicitWeight) {
+  const totalDays = Math.max(1, daysBetween(goal.startDate, goal.targetDate));
+  const elapsedDays = Math.min(totalDays, daysBetween(goal.startDate, date));
+  const dailyLossKg = goal.lossKg / totalDays;
+  const targetWeightKg = goal.startWeightKg - goal.lossKg;
+  const expectedWeightKg = Math.max(targetWeightKg, goal.startWeightKg - (dailyLossKg * elapsedDays));
+  const entry = state.weightEntries.find(e => e.date === date);
+  const currentWeightKg = explicitWeight ?? entry?.weightKg ?? null;
+
+  return {
+    totalDays,
+    dailyLossKg,
+    targetWeightKg,
+    expectedWeightKg,
+    currentWeightKg,
+    hasEntry: currentWeightKg !== null,
+    deltaKg: currentWeightKg === null ? 0 : currentWeightKg - expectedWeightKg
+  };
 }
 
 // Close modals on overlay click
